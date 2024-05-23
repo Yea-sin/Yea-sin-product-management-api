@@ -4,7 +4,7 @@ import productRouter from "./app/modules/product/product.route";
 
 const app = express();
 
-app.use(express());
+app.use(express.json());
 app.use(cors());
 
 //middleware

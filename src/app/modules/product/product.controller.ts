@@ -1,24 +1,56 @@
 import { Request, Response } from "express";
+import { productServices } from "./product.service";
+import { productValidateSchema } from "./product.validate";
 
 // Create a new product
-const createProduct = (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "Success",
-    data: null,
-  });
+const createProduct = async (req: Request, res: Response) => {
+  const body = req.body;
+  try {
+    const validateData = productValidateSchema.safeParse(body);
+
+    if (!validateData.success) {
+      res.status(403).json({
+        success: false,
+        message: "Validation Error!",
+        data: validateData.error.errors,
+      });
+    } else {
+      const data = await productServices.productCreateIntoDb(validateData.data);
+
+      res.status(200).json({
+        success: true,
+        message: "Success",
+        data,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error",
+      data: err,
+    });
+  }
 };
 
-//  Retrive all products
-const getAllProducts = (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "Success",
-    data: null,
-  });
+//  Retrieve all products
+const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const data = await productServices.fetchProductsFromDb();
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully!",
+      data,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error",
+      data: err,
+    });
+  }
 };
 
-//  Retrive a product by productId
+//  Retrieve a product by productId
 const getSingleProduct = (req: Request, res: Response) => {
   res.status(200).json({
     success: true,

@@ -6,16 +6,16 @@ const productRouter = express.Router();
 // Insert a product
 productRouter.post("/", productController.createProduct);
 
-// Retrive all products
+// Retrieve all products
 productRouter.get("/", productController.getAllProducts);
 
-// Retrive a single product
+// Retrieve a single product
 productRouter.get("/:productId", productController.getSingleProduct);
 
 // Update a product
 productRouter.put("/:productId", productController.updateProduct);
 
-// Deleter a product
+// Delete a product
 productRouter.delete("/:productId", productController.deleteProduct);
 
 export default productRouter;
