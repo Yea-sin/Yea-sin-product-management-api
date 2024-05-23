@@ -1,10 +1,14 @@
 import express from "express";
 import cors from "cors";
+import productRouter from "./app/modules/product/product.route";
 
 const app = express();
 
 app.use(express());
 app.use(cors());
+
+//middleware
+app.use("/api/products/", productRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
