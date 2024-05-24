@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { productServices } from "./product.service";
 import { productValidateSchema } from "./product.validate";
 import { ProductModel } from "./product.model";
-import { Product } from "./product.interface";
+import { TProduct } from "./product.interface";
 
 // Create a new product
 const createProduct = async (req: Request, res: Response) => {
@@ -97,7 +97,7 @@ const updateProduct = async (req: Request, res: Response) => {
       });
     } else {
       //Full product data with existing data and updated data
-      const productData: Product = { ...extData.toObject(), ...body };
+      const productData: TProduct = { ...extData.toObject(), ...body };
       //validate product schema before update document
       const validateData = productValidateSchema.safeParse(productData);
       if (!validateData.success) {
