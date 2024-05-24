@@ -1,16 +1,38 @@
 import { Product } from "./product.interface";
 import { ProductModel } from "./product.model";
 
+type TQuery = {
+  $or: (
+    | {
+        name: {
+          $regex: string;
+        };
+        description?: undefined;
+        category?: undefined;
+      }
+    | {
+        description: {
+          $regex: string;
+        };
+        name?: undefined;
+        category?: undefined;
+      }
+    | {
+        category: {
+          $regex: string;
+        };
+        name?: undefined;
+        description?: undefined;
+      }
+  )[];
+};
+
 const productCreateIntoDb = async (product: Product) => {
   const data = await ProductModel.create(product);
   return data;
 };
 
-const fetchProductsFromDb = async (searchTerm?: string) => {
-  const regex = { $regex: searchTerm };
-  const query = {
-    $or: [{ name: regex }, { description: regex }, { category: regex }],
-  };
+const fetchProductsFromDb = async (query: TQuery) => {
   const data = await ProductModel.find(query);
   return data;
 };

@@ -36,11 +36,14 @@ const createProduct = async (req: Request, res: Response) => {
 
 //  Retrieve all products
 const getAllProducts = async (req: Request, res: Response) => {
-  const { searchTerm } = req.query;
-  const query = searchTerm || "";
+  const searchTerm: string = (req.query.searchTerm as string) || "";
+  const regex = { $regex: searchTerm };
+  const query = {
+    $or: [{ name: regex }, { description: regex }, { category: regex }],
+  };
 
   try {
-    const data = await productServices.fetchProductsFromDb(query as string);
+    const data = await productServices.fetchProductsFromDb(query);
     res.status(200).json({
       success: true,
       message: "Products fetched successfully!",
