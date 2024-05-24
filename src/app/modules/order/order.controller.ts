@@ -16,7 +16,9 @@ const createOrder = async (req: Request, res: Response) => {
         data: validateData.error.errors,
       });
     } else {
+      //validated order data
       const orderData = validateData.data;
+
       //check if product exist or not
       const product = await ProductModel.findById({ _id: orderData.productId });
       if (!product) {
@@ -26,13 +28,40 @@ const createOrder = async (req: Request, res: Response) => {
           data: null,
         });
       } else {
-        const data = await orderServices.orderCreateIntoDb(orderData);
+        //check if product has required quantity or not
+        const existingQuantity = product.inventory.quantity;
+        if (existingQuantity >= orderData.quantity) {
+          const data = await orderServices.orderCreateIntoDb(orderData);
+          //update product quantity when product ordered
+          await ProductModel.updateOne(
+            { _id: orderData.productId },
+            {
+              $set: {
+                "inventory.quantity": existingQuantity - orderData.quantity,
+              },
+            }
+          );
 
-        res.status(200).json({
-          success: true,
-          message: "Order created successfully!",
-          data,
-        });
+          res.status(200).json({
+            success: true,
+            message: "Order created successfully!",
+            data,
+          });
+        } else {
+          //update stock availability to false on product
+          await ProductModel.updateOne(
+            { _id: orderData.productId },
+            {
+              $set: {
+                "inventory.inStock": false,
+              },
+            }
+          );
+          return res.status(409).json({
+            success: false,
+            message: "Insufficient quantity available in inventory",
+          });
+        }
       }
     }
   } catch (err) {
@@ -54,15 +83,26 @@ const getAllOrders = async (req: Request, res: Response) => {
   try {
     const data = await orderServices.fetchOrdersFromDb(query);
 
-    const isSearched = email && data;
-    const message = isSearched
-      ? "Orders fetched successfully for user email!"
-      : "Orders fetched successfully!";
-    res.status(200).json({
-      success: true,
-      message: message,
-      data,
-    });
+    //check if order exist or not
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    } else {
+      //check if searched data available or not
+      const isSearched = email && data;
+
+      //check if data fetched by search or not. and conditionally set success message
+      const message = isSearched
+        ? "Orders fetched successfully for user email!"
+        : "Orders fetched successfully!";
+      res.status(200).json({
+        success: true,
+        message: message,
+        data,
+      });
+    }
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -72,7 +112,7 @@ const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
-export const productController = {
+export const orderController = {
   createOrder,
   getAllOrders,
 };

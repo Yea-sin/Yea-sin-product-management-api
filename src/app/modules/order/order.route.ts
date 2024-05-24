@@ -1,12 +1,12 @@
 import express from "express";
-import { productController } from "./order.controller";
+import { orderController } from "./order.controller";
 
 const orderRouter = express.Router();
 
 // Insert a Order
-orderRouter.post("/", productController.createOrder);
+orderRouter.post("/", orderController.createOrder);
 
 // Retrieve all products
-orderRouter.get("/", productController.getAllOrders);
+orderRouter.get("/", orderController.getAllOrders);
 
 export default orderRouter;
