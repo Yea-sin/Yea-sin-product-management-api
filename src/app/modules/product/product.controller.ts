@@ -116,12 +116,30 @@ const updateProduct = async (req: Request, res: Response) => {
 };
 
 // Delete product
-const deleteProduct = (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "Success",
-    data: null,
-  });
+const deleteProduct = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+  try {
+    const data = await productServices.deleteProductFromDb(productId);
+    if (!data.deletedCount) {
+      res.status(400).json({
+        success: false,
+        message: "Error on deleting product!",
+        data: null,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "Product deleted successfully!",
+        data: null,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Error",
+      data: err,
+    });
+  }
 };
 
 export const productController = {
