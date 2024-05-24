@@ -36,8 +36,11 @@ const createProduct = async (req: Request, res: Response) => {
 
 //  Retrieve all products
 const getAllProducts = async (req: Request, res: Response) => {
+  const { searchTerm } = req.query;
+  const query = searchTerm || "";
+
   try {
-    const data = await productServices.fetchProductsFromDb();
+    const data = await productServices.fetchProductsFromDb(query as string);
     res.status(200).json({
       success: true,
       message: "Products fetched successfully!",
@@ -82,6 +85,7 @@ const updateProduct = async (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
         message: "Product not found!",
+        data: null,
       });
     } else {
       //Full product data with existing data and updated data
