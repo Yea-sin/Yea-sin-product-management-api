@@ -1,4 +1,4 @@
-import { Product } from "./product.interface";
+import { TProduct } from "./product.interface";
 import { ProductModel } from "./product.model";
 
 type TQuery = {
@@ -27,7 +27,7 @@ type TQuery = {
   )[];
 };
 
-const productCreateIntoDb = async (product: Product) => {
+const productCreateIntoDb = async (product: TProduct) => {
   const data = await ProductModel.create(product);
   return data;
 };
@@ -42,7 +42,7 @@ const fetchSingleProductFromDb = async (productId: string) => {
   return data;
 };
 
-const updateProductIntoDb = async (productId: string, data: Product) => {
+const updateProductIntoDb = async (productId: string, data: TProduct) => {
   const product = await ProductModel.findOneAndUpdate(
     { _id: productId },
     data,
