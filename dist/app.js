@@ -10,7 +10,7 @@ const order_route_1 = __importDefault(require("./app/modules/order/order.route")
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-//middleware
+// middleware
 app.use("/api/products/", product_route_1.default);
 app.use("/api/orders/", order_route_1.default);
 // Handle unmatched routes
@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 //error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ success: false, message: "Route not found" });
+    res.status(500).json({ success: false, message: "Internal server error" });
 });
 app.get("/", (req, res) => {
     res.send("Hello World!");

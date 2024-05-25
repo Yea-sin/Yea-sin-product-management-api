@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-//middleware
+// middleware
 app.use("/api/products/", productRouter);
 app.use("/api/orders/", orderRouter);
 
@@ -23,7 +23,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 //error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
-  res.status(500).json({ success: false, message: "Route not found" });
+  res.status(500).json({ success: false, message: "Internal server error" });
 });
 
 app.get("/", (req, res) => {
