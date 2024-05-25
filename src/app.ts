@@ -12,6 +12,11 @@ app.use(cors());
 app.use("/api/products/", productRouter);
 app.use("/api/orders/", orderRouter);
 
+//root route
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 // Handle unmatched routes
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(404).json({
